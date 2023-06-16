@@ -38,31 +38,31 @@ class UserDataSource @Inject constructor(
 
   fun findAll(): Flow<ApiResult<List<User>>> {
     return flow {
-      //emit(ApiResult.Loading)
-      supabaseClient.realtime.connect()
-      val channel = supabaseClient.realtime.createChannel("channelId") {
-        //optional config
-      }
-      val changeFlow = channel.postgresChangeFlow<PostgresAction>(schema = "public")
-      changeFlow.collect {
-        when(it) {
-          is PostgresAction.Delete -> Log.e("ericampire", "Deleted: ${it.oldRecord}")
-          is PostgresAction.Insert -> Log.e("ericampire", "Inserted: ${it.record}")
-          is PostgresAction.Select -> Log.e("ericampire", "Selected: ${it.record}")
-          is PostgresAction.Update -> Log.e("ericampire", "Updated: ${it.oldRecord} with ${it.record}")
-        }
-      }
-
-      channel.join()
-
-
-//      try {
-//        val res = supabaseClient.postgrest["users-table"].select()
-//        val users = res.decodeList<User>()
-//        emit(ApiResult.Success(users))
-//      } catch (e: Exception) {
-//        emit(ApiResult.Error(e.message))
+      emit(ApiResult.Loading)
+//      supabaseClient.realtime.connect()
+//      val channel = supabaseClient.realtime.createChannel("channelId") {
+//        //optional config
 //      }
+//      val changeFlow = channel.postgresChangeFlow<PostgresAction>(schema = "public")
+//      changeFlow.collect {
+//        when(it) {
+//          is PostgresAction.Delete -> Log.e("ericampire", "Deleted: ${it.oldRecord}")
+//          is PostgresAction.Insert -> Log.e("ericampire", "Inserted: ${it.record}")
+//          is PostgresAction.Select -> Log.e("ericampire", "Selected: ${it.record}")
+//          is PostgresAction.Update -> Log.e("ericampire", "Updated: ${it.oldRecord} with ${it.record}")
+//        }
+//      }
+//
+//      channel.join()
+
+
+      try {
+        val res = supabaseClient.postgrest["users-table"].select()
+        val users = res.decodeList<User>()
+        emit(ApiResult.Success(users))
+      } catch (e: Exception) {
+        emit(ApiResult.Error(e.message))
+      }
     }
   }
 
